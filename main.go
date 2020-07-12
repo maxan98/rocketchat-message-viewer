@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	log.SetOutput(os.Stdout)
 	log.SetLevel(log.DebugLevel)
 	parser := argparse.NewParser("goreadmongo", "Reads all messages from RocketChat. For only auditing purpose ofc.")
 	// Create string flag
@@ -26,12 +27,12 @@ func main() {
 		fmt.Print(parser.Usage(err))
 	}
 	// Finally print the collected string
-	if *w != false{
+	if *w != false && *r != ""{
 		log.Debugf("W")
 		bs := bson.D{{}}
 		suites.GetAllMessagesByFilter(bs, *b)
 	}
-	if *r != ""{
+	if *r != "" {
 		log.Debugf("R")
 		bs := bson.D{{"rid", *r}}
 		suites.GetAllMessagesByFilter(bs, *b)

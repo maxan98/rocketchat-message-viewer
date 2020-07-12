@@ -14,7 +14,7 @@ import (
 	"time"
 )
 func getConnection(url string) (*mongo.Client, context.Context, error, context.CancelFunc){
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(url))
 	if err != nil{
 		return nil, nil, err, cancel
@@ -91,8 +91,10 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) {
 		log.Infof("User: %s (%s) \n", mes.User.Name, mes.User.Username)
 		log.Infof("Message: %s \n", mes.Msg)
 		log.Infof(mes.Time.Format("2 Jan 15:04:05"))
-		if mes.URL != "" {
-			log.Infof("URL: %s\n", mes.URL)
+		if mes.URLS != nil {
+			for i := range mes.Attachments{
+			log.Infof("URL: %s\n", mes.URLS[i].Url)
+			}
 		}
 		if mes.Attachments != nil{
 			for i := range mes.Attachments{
