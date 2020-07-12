@@ -9,10 +9,14 @@ import (
 )
 
 type Message struct {
-	Id   string `bson:"_id"`
-	Rid  string `bson:"rid"`
-	Msg  string `bson:"msg"`
-	User User   `bson:"u"`
+	Id   string    `bson:"_id"`
+	Rid  string    `bson:"rid"`
+	Msg  string    `bson:"msg"`
+	User User      `bson:"u"`
+	URL  string    `bson:"url"`
+	Time time.Time `bson:"ts"`
+	Type string    `bson:"t"`
+	Attachments []Attachment
 }
 type User struct {
 	Id       string `bson:"_id"`
@@ -25,12 +29,18 @@ type Room struct {
 	Name      string `bson:"name"`
 	Usernames []string
 }
+type Attachment struct {
+	Title       string `bson:"title"`
+	ImageUrl   string  `bson:"image_url"`
+	Description string `bson:"description"`
+}
 
-func getcollection(client *mongo.Client, db string, col string) (*mongo.Cursor, error) {
+//get whole collection or filtered. Pass empty bson.D for whole collection.
+func getCollection(client *mongo.Client, db string, col string, filter bson.D) (*mongo.Cursor, error) {
 	collection := client.Database(db).Collection(col)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	cur, err := collection.Find(ctx, bson.D{})
+	cur, err := collection.Find(ctx, filter)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,3 +61,5 @@ func interpretateId(client *mongo.Client, db string, col string, id string) (*Ro
 	//log.Info(result)
 	return result, nil
 }
+
+
