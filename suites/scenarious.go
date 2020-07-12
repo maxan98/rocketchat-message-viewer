@@ -92,7 +92,7 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) {
 		log.Infof("Message: %s \n", mes.Msg)
 		log.Infof(mes.Time.Format("2 Jan 15:04:05"))
 		if mes.URLS != nil {
-			for i := range mes.Attachments{
+			for i := range mes.URLS{
 			log.Infof("URL: %s\n", mes.URLS[i].Url)
 			}
 		}
