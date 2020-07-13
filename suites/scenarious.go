@@ -71,7 +71,7 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) []Message {
 		//	if mes.Rid != roomid {
 		//		continue
 		//	}
-		resultStruct = append(resultStruct,mes)
+
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -84,6 +84,7 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) []Message {
 			log.Warn("Cannot interpretate room id")
 		}
 		log.Infof("Room Name: %s", res.Name)
+		mes.Rid = fmt.Sprintf("%s%s",res.Name , res.Usernames)
 		if res.Usernames != nil {
 			log.Infof("[ %s ]", res.Usernames)
 		}
@@ -114,6 +115,7 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) []Message {
 			}
 		}
 		log.Debugf("\n\n_____________\n")
+		resultStruct = append(resultStruct,mes)
 	}
 
 	if err := cur.Err(); err != nil {

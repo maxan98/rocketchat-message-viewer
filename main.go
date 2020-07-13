@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"github.com/akamensky/argparse"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"goreadmongo/api"
 	"goreadmongo/suites"
 	"net/http"
 	"os"
+
 )
 
 
@@ -53,7 +55,13 @@ func main() {
 		sr.HandleFunc("", api.AllMessagesAllRooms).Methods(http.MethodGet)
 		sr.HandleFunc("", api.InternalError)
 		sr.HandleFunc("/{roomID}", api.AllMessagesFilterRooms).Methods(http.MethodGet)
-		log.Fatal(http.ListenAndServe(":8080", r))
+		c := cors.New(cors.Options{
+			AllowedOrigins: []string{"http://localhost:3000"},
+			AllowCredentials: true,
+		})
+
+		handler := c.Handler(r)
+		log.Fatal(http.ListenAndServe(":8080", handler))
 	}
 
 
