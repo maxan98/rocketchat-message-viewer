@@ -5,9 +5,14 @@ import (
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
+var (
+	BASEURL string
+	FILTER bson.D
+)
 type Message struct {
 	Id   string    `bson:"_id"`
 	Rid  string    `bson:"rid"`
@@ -44,7 +49,9 @@ func getCollection(client *mongo.Client, db string, col string, filter bson.D) (
 	collection := client.Database(db).Collection(col)
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
-	cur, err := collection.Find(ctx, filter)
+	options := options.Find()
+	options.SetSort(bson.D{{"ts", 1}})
+	cur, err := collection.Find(ctx, filter,options)
 	if err != nil {
 		log.Fatal(err)
 	}

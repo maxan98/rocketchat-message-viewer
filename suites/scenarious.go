@@ -26,7 +26,7 @@ func getConnection(url string) (*mongo.Client, context.Context, error, context.C
 	fmt.Printf("Pung succeeded")
 	return client, ctx, nil, cancel
 }
-func GetAllRooms() {
+func GetAllRooms() []Room {
 	client, ctx, err, cancel := getConnection("mongodb://localhost:27017")
 	defer cancel()
 	cur, err := getCollection(client, "rocketchat", "rocketchat_room",bson.D{})
@@ -35,12 +35,14 @@ func GetAllRooms() {
 	}
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"Id", "Name", "Usernames"})
+	var resultBson []Room
 	for cur.Next(ctx) {
 		var room Room
 		err := cur.Decode(&room)
 		//	if mes.Rid != roomid {
 		//		continue
 		//	}
+		resultBson = append(resultBson,room)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -53,21 +55,23 @@ func GetAllRooms() {
 	if log.GetLevel() == log.DebugLevel{
 	table.Render()
 	}
-
+return resultBson
 }
-func GetAllMessagesByFilter(filter bson.D, baseurl string) {
+func GetAllMessagesByFilter(filter bson.D, baseurl string) []Message {
     client, ctx, err, cancel := getConnection("mongodb://localhost:27017")
     defer cancel()
 	cur, err := getCollection(client, "rocketchat", "rocketchat_message",filter)
 	if err != nil {
 		log.Error(err)
 	}
+	var resultStruct []Message
 	for cur.Next(ctx) {
 		var mes Message
 		err := cur.Decode(&mes)
 		//	if mes.Rid != roomid {
 		//		continue
 		//	}
+		resultStruct = append(resultStruct,mes)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -115,5 +119,5 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) {
 	if err := cur.Err(); err != nil {
 		log.Fatal(err)
 	}
-
+return resultStruct
 }
