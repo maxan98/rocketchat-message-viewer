@@ -75,7 +75,6 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) []Message {
 		if err != nil {
 			log.Fatal(err)
 		}
-		// do something with result....
 
 		log.Debugf("Room: %s \n", mes.Rid)
 		log.Debugf("Message id: %s \n", mes.Id)
