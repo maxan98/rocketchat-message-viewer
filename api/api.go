@@ -2,11 +2,29 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"goreadmongo/suites"
 	"net/http"
 )
+
+func StartServer(port int, allowedOringinPort int){
+	r := mux.NewRouter()
+	sr := r.PathPrefix("/api/v1").Subrouter()
+	sr.HandleFunc("", AllMessagesAllRooms).Methods(http.MethodGet)
+	sr.HandleFunc("", InternalError)
+	sr.HandleFunc("/{roomID}", AllMessagesFilterRooms).Methods(http.MethodGet)
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{fmt.Sprintf("http://localhost:%d",allowedOringinPort)},
+		AllowCredentials: true,
+	})
+
+	handler := c.Handler(r)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d",port), handler))
+}
 
 func AllMessagesAllRooms(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")

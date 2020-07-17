@@ -11,7 +11,7 @@ import (
 
 var (
 	BASEURL string
-	FILTER bson.D
+
 )
 type Message struct {
 	Id   string    `bson:"_id"`
