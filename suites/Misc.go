@@ -16,12 +16,14 @@ var (
 type Message struct {
 	Id   string    `bson:"_id"`
 	Rid  string    `bson:"rid"`
+	Target string  `bson:"tmid"`
 	Msg  string    `bson:"msg"`
 	User User      `bson:"u"`
 	URLS  []Url    `bson:"urls"`
 	Time time.Time `bson:"ts"`
 	Type string    `bson:"t"`
-	Attachments []Attachment
+	Thread []Message
+	Attachments []Attachment `bson:"attachments"`
 
 }
 type Url struct {

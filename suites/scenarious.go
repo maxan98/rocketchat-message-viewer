@@ -57,14 +57,25 @@ func GetAllRooms() []Room {
 	}
 return resultBson
 }
-func GetAllMessagesByFilter(filter bson.D, baseurl string) []Message {
+//message [mesid]messagw threads[mesid]targetid
+func injectThread(messages map[string]Message, threads map[string]string){
+	for key, value := range threads{
+		if mestochange, ok := messages[key]; ok{
+			mestochange.Thread = append(mestochange.Thread,messages[value])
+			messages[key] = mestochange
+			log.Infof("This is a message in thread. Replaced in return struct(visualisation)")
+		}
+	}
+}
+func GetAllMessagesByFilter(filter bson.D, baseurl string) map[string]Message {
     client, ctx, err, cancel := getConnection("mongodb://localhost:27017")
     defer cancel()
 	cur, err := getCollection(client, "rocketchat", "rocketchat_message",filter)
 	if err != nil {
 		log.Error(err)
 	}
-	var resultStruct []Message
+	var threads = make (map[string]string)
+	resultStruct := make(map[string]Message)
 	for cur.Next(ctx) {
 		var mes Message
 		err := cur.Decode(&mes)
@@ -100,6 +111,12 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) []Message {
 			log.Infof("URL: %s\n", mes.URLS[i].Url)
 			}
 		}
+		if mes.Target != ""{
+			log.Info("here")
+			threads[mes.Id] = mes.Target
+
+
+		}
 		if mes.Attachments != nil{
 			for i := range mes.Attachments{
 				if mes.Attachments[i].Title !=""{
@@ -114,9 +131,9 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) []Message {
 			}
 		}
 		log.Debugf("\n\n_____________\n")
-		resultStruct = append(resultStruct,mes)
+		resultStruct[mes.Id] = mes
 	}
-
+	injectThread(resultStruct,threads)
 	if err := cur.Err(); err != nil {
 		log.Fatal(err)
 	}
