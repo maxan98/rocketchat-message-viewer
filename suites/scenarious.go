@@ -57,25 +57,16 @@ func GetAllRooms() []Room {
 	}
 return resultBson
 }
-//message [mesid]messagw threads[mesid]targetid
-func injectThread(messages map[string]Message, threads map[string]string){
-	for key, value := range threads{
-		if mestochange, ok := messages[key]; ok{
-			mestochange.Thread = append(mestochange.Thread,messages[value])
-			messages[key] = mestochange
-			log.Infof("This is a message in thread. Replaced in return struct(visualisation)")
-		}
-	}
-}
-func GetAllMessagesByFilter(filter bson.D, baseurl string) map[string]Message {
+
+func GetAllMessagesByFilter(filter bson.D, baseurl string) []Message {
     client, ctx, err, cancel := getConnection("mongodb://localhost:27017")
     defer cancel()
 	cur, err := getCollection(client, "rocketchat", "rocketchat_message",filter)
 	if err != nil {
 		log.Error(err)
 	}
-	var threads = make (map[string]string)
-	resultStruct := make(map[string]Message)
+
+	var resultStruct []Message
 	for cur.Next(ctx) {
 		var mes Message
 		err := cur.Decode(&mes)
@@ -111,12 +102,25 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) map[string]Message {
 			log.Infof("URL: %s\n", mes.URLS[i].Url)
 			}
 		}
-		if mes.Target != ""{
+
 			log.Info("here")
-			threads[mes.Id] = mes.Target
+			curn, err := getCollection(client, "rocketchat", "rocketchat_message",bson.D{{"tmid",mes.Id}})
+			log.Infof(mes.Id)
+			if err != nil {
+				log.Error(err)
+			}
+
+			for curn.Next(ctx) {
+				var mesn Message
+				err := curn.Decode(&mesn)
+				log.Infof(mesn.Id)
+				if err != nil {
+					log.Fatal(err)
+				}
+				mes.Thread = append(mes.Thread,mesn)
+			}
 
 
-		}
 		if mes.Attachments != nil{
 			for i := range mes.Attachments{
 				if mes.Attachments[i].Title !=""{
@@ -131,9 +135,10 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) map[string]Message {
 			}
 		}
 		log.Debugf("\n\n_____________\n")
-		resultStruct[mes.Id] = mes
+		resultStruct = append(resultStruct,mes)
 	}
-	injectThread(resultStruct,threads)
+	//TODO: MAP IS NOT ORDERED. REWRITE. TEST IT
+
 	if err := cur.Err(); err != nil {
 		log.Fatal(err)
 	}

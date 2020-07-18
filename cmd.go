@@ -40,7 +40,6 @@ func GetCli() *cli.App {
 						Name:    "base",
 						Usage:   "Base url of your RC instance",
 						Value: "rc.iotfox.ru",
-						Required: true,
 						DefaultText: "rc.iotfox.ru",
 					},
 				},
