@@ -55,11 +55,11 @@
                 <tr v-for="(mess, index) in messages" :key="index">
 
                   <td>
-                    <span>{{ mess.User }}</span>
-
-
-
-
+                    <span><i>{{ mess.User.Username }}</i></span>
+                    <avatar v-bind:username=mess.User.Username></avatar>
+                    <span>{{ mess.Msg }}</span>
+                    <span v-for="(thr,idx) in mess.Thread ":key="index"><br>&nbsp &nbsp|_{{ thr.Msg }}</span>
+                    <span v-for="(att,idx) in mess.Attachments ":key="index"><br>{{ att.Title }}<br><img v-bind:src=att.ImageUrl><br>{{ att.Description }}<br></span>
 
                   </td>
 
@@ -67,7 +67,7 @@
                 </tbody>
               </table>
 
-        <q-btn label="My Button"></q-btn>
+
 
         <b-button type="close" variant="danger">Reset</b-button>
 
@@ -78,8 +78,11 @@
 
 <script>
   import axios from 'axios';
-
+  import Avatar from 'vue-avatar'
   export default {
+    components: {
+      Avatar
+    },
     data() {
       return {
         rooms: [],

@@ -17,6 +17,9 @@
     "bootstrap-vue": "^2.0.0-rc.11",
     "quasar": "^1.0.0",
     "vue": "^2.5.2",
+    "vue-advanced-chat": "^0.4.3",
+    "vue-avatar": "^2.3.0",
+    "vue-bubble-chat": "^1.1.2",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

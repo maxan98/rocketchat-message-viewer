@@ -128,6 +128,8 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) []Message {
 				}
 				if mes.Attachments[i].ImageUrl !=""{
 					log.Infof("Attatchment image URL: %s%s \n", baseurl,mes.Attachments[i].ImageUrl)
+					mes.Attachments[i].ImageUrl = fmt.Sprintf("https://%s%s",baseurl,mes.Attachments[i].ImageUrl)
+
 				}
 				if mes.Attachments[i].Description !=""{
 					log.Infof("Attatchment Description: %s \n", mes.Attachments[i].Description)
