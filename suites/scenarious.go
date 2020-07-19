@@ -139,7 +139,7 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) []Message {
 		log.Debugf("\n\n_____________\n")
 		resultStruct = append(resultStruct,mes)
 	}
-	//TODO: MAP IS NOT ORDERED. REWRITE. TEST IT
+	//TODO: REMOVE MESSAGES WHICH ARE THREAD ONES
 
 	if err := cur.Err(); err != nil {
 		log.Fatal(err)
