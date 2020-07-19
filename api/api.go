@@ -28,7 +28,7 @@ func StartServer(port int, allowedOringinPort int){
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d",port), handler))
 }
 func Ping(w http.ResponseWriter, r *http.Request) {
-	log.Infof("Ping")
+	log.Debugf("Ping")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	mes,_ := json.Marshal("Pong!")

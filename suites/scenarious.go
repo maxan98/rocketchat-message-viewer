@@ -84,28 +84,28 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) []Message {
 		if err != nil {
 			log.Warn("Cannot interpretate room id")
 		}
-		log.Infof("Room Name: %s", res.Name)
+		log.Debugf("Room Name: %s", res.Name)
 		mes.Rid = fmt.Sprintf("%s%s",res.Name , res.Usernames)
 		if res.Usernames != nil {
-			log.Infof("[ %s ]", res.Usernames)
+			log.Debugf("[ %s ]", res.Usernames)
 		}
 		if mes.Type == "jitsi_call_started" {
 			log.Debugf("This is a Jitsi call. Skipping\n_________\n")
 			continue
 		}
-		log.Infof("\n")
-		log.Infof("User: %s (%s) \n", mes.User.Name, mes.User.Username)
-		log.Infof("Message: %s \n", mes.Msg)
-		log.Infof(mes.Time.Format("2 Jan 15:04:05"))
+		log.Debugf("\n")
+		log.Debugf("User: %s (%s) \n", mes.User.Name, mes.User.Username)
+		log.Debugf("Message: %s \n", mes.Msg)
+		log.Debugf(mes.Time.Format("2 Jan 15:04:05"))
 		if mes.URLS != nil {
 			for i := range mes.URLS{
-			log.Infof("URL: %s\n", mes.URLS[i].Url)
+			log.Debugf("URL: %s\n", mes.URLS[i].Url)
 			}
 		}
 
-			log.Info("here")
+			log.Debug("here")
 			curn, err := getCollection(client, "rocketchat", "rocketchat_message",bson.D{{"tmid",mes.Id}})
-			log.Infof(mes.Id)
+			log.Debugf(mes.Id)
 			if err != nil {
 				log.Error(err)
 			}
@@ -113,7 +113,7 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) []Message {
 			for curn.Next(ctx) {
 				var mesn Message
 				err := curn.Decode(&mesn)
-				log.Infof(mesn.Id)
+				log.Debugf(mesn.Id)
 				if err != nil {
 					log.Fatal(err)
 				}
@@ -124,15 +124,15 @@ func GetAllMessagesByFilter(filter bson.D, baseurl string) []Message {
 		if mes.Attachments != nil{
 			for i := range mes.Attachments{
 				if mes.Attachments[i].Title !=""{
-					log.Infof("Attatchment title: %s \n", mes.Attachments[i].Title)
+					log.Debugf("Attatchment title: %s \n", mes.Attachments[i].Title)
 				}
 				if mes.Attachments[i].ImageUrl !=""{
-					log.Infof("Attatchment image URL: %s%s \n", baseurl,mes.Attachments[i].ImageUrl)
+					log.Debugf("Attatchment image URL: %s%s \n", baseurl,mes.Attachments[i].ImageUrl)
 					mes.Attachments[i].ImageUrl = fmt.Sprintf("https://%s%s",baseurl,mes.Attachments[i].ImageUrl)
 
 				}
 				if mes.Attachments[i].Description !=""{
-					log.Infof("Attatchment Description: %s \n", mes.Attachments[i].Description)
+					log.Debugf("Attatchment Description: %s \n", mes.Attachments[i].Description)
 				}
 			}
 		}

@@ -8,7 +8,7 @@ import (
 
 func main() {
 	log.SetOutput(os.Stdout)
-	log.SetLevel(log.DebugLevel)
+	//log.SetLevel(log.DebugLevel)
 	app := GetCli()
 	err := app.Run(os.Args)
 	if err != nil {

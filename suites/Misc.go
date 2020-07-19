@@ -71,7 +71,7 @@ func interpretateId(client *mongo.Client, db string, col string, id string) (*Ro
 		log.Error(err)
 		return &Room{}, err
 	}
-	//log.Info(result)
+	//log.Debug(result)
 	return result, nil
 }
 
